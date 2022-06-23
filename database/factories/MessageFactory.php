@@ -14,7 +14,10 @@ class MessageFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'sender_id' => $this->faker->numberBetween(1, 10),
+            'receiver_id' => $this->faker->numberBetween(1, 10),
+            'message' => $this->faker->text,
+            
         ];
     }
 }

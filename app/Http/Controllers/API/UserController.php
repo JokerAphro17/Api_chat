@@ -39,7 +39,12 @@ class UserController extends BaseController
         if ($validator->fails()) {
             return $this->sendError('Erreur de la validation.', $validator->errors());
         }
+        $mailExist = User::where('email', $request->email)->first();
+        if($mailExist){
+            return $this->sendError('Email existe deja.', $mailExist);
+        }
         $input = $request->all();
+        
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         $success['token'] = $user->createToken('MyApp')->accessToken;
