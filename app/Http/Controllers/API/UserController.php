@@ -45,11 +45,12 @@ class UserController extends BaseController
         }
         $input = $request->all();
         
-        $input['password'] = bcrypt($input['password']);
+        $input['password'] = \Hash::make($input['password']);
         $user = User::create($input);
         $success['token'] = $user->createToken('MyApp')->accessToken;
         $success['nom'] = $user->nom;
-        return $this->sendResponse($success, 'Votre compte ac été creer avec success.');
+        $success['prenom'] = $user->prenom;
+        return $this->sendResponse($success, 'Votre compte a été creer avec success.');
     }
 
     /**
@@ -72,7 +73,7 @@ class UserController extends BaseController
      */
     public function update(Request $request, User $user)
     {
-        //
+        
     }
 
     /**
@@ -83,8 +84,25 @@ class UserController extends BaseController
      */
     public function destroy(User $user)
     {
-        //
+        
     }
-    
-    
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return $this->sendError('Erreur de la validation.', $validator->errors());
+        }
+        $useur = User::where('email', $request->email)->first();
+        if(!$useur){
+            return $this->sendError('Email ou mot de passe incorrect.', $useur);
+        }
+        if(!\Hash::check($request->password, $useur->password)){
+            return $this->sendError('Email ou mot de passe incorrect.', $useur);
+        }
+        return $this->sendResponse($useur, 'Connexion reussie.');
+    }
 }
+
