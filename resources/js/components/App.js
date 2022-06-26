@@ -3,18 +3,21 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { AnimatePresence } from "framer-motion";
-import Auth from "./Auth";
-import Header from "./Header";
-import SignUp from "./SignUp";
-function Example() {
+import Login from "./view/Login";
+import SignUp from "./view/SignUp";
+import Header from "./view/components/Header";
+import Chat from "./view/Chat";
+function App() {
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
     return (
         <div className="container">
             <Header />
             <BrowserRouter>
                 <AnimatePresence>
                     <Routes location={location} key={location.pathname}>
-                        <Route path="/" element={<Auth />} />
+                        <Route path="/" element={<Login />} />
                         <Route path="/register" element={<SignUp />} />
+                        <Route path="/chat" element={<Chat />} />
                         <Route
                             path="*"
                             element={
@@ -30,8 +33,8 @@ function Example() {
     );
 }
 
-export default Example;
+export default App;
 
 if (document.getElementById("app")) {
-    ReactDOM.render(<Example />, document.getElementById("app"));
+    ReactDOM.render(<App />, document.getElementById("app"));
 }

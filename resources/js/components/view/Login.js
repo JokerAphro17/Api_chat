@@ -1,21 +1,26 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import {
+    Avatar,
+    Button,
+    CssBaseline,
+    TextField,
+    FormControlLabel,
+    Checkbox,
+    Link,
+    Grid,
+    Box,
+    Typography,
+    Container,
+    createTheme,
+    ThemeProvider,
+} from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
+
 import { NavLink } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import Loader from "./Loader";
+import Loader from "./components/Loader";
+import swl from "sweetalert";
 function Copyright(props) {
     return (
         <Typography
@@ -36,14 +41,16 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignIn() {
+export default function Login() {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [mail_error, setMailError] = React.useState(false);
     const [password_error, setPasswordError] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [error, setError] = React.useState(false);
+    const [error_api, setErrorApi] = React.useState(false);
     const location = useLocation();
+    const [data, setData] = React.useState(null);
     const handleSubmit = (event) => {
         event.preventDefault();
         if (email === "") {
@@ -155,7 +162,7 @@ export default function SignIn() {
                             <NavLink to="/register">
                                 <Link href="#" variant="body2">
                                     {
-                                        "Vous n'avez pas de compte? inscrivez vous "
+                                        "Vous n'avez pas de compte? inscrivez vous"
                                     }
                                 </Link>
                             </NavLink>

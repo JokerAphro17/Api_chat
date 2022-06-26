@@ -1,21 +1,24 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import {
+    Avatar,
+    Button,
+    CssBaseline,
+    TextField,
+    FormControlLabel,
+    Checkbox,
+    Link,
+    Grid,
+    Box,
+    Typography,
+    Container,
+    createTheme,
+    ThemeProvider,
+} from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { NavLink } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import Loader from "./Loader";
+import Loader from "./components/Loader";
 import swl from "sweetalert";
 
 function Copyright(props) {
@@ -51,6 +54,7 @@ export default function SignUp() {
     const [error_n, setError_n] = useState(false);
     const [error_pw, setError_pw] = useState(false);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
     const handleSubmit = (event) => {
         event.preventDefault();
         if (password !== confirmPassword) {
@@ -77,6 +81,46 @@ export default function SignUp() {
             password === confirmPassword
         ) {
             setLoading(true);
+            const data = {
+                nom: lastName,
+                prenom: firstName,
+                email: email,
+                password: password,
+                c_password: confirmPassword,
+            };
+            axios
+                .post("http://localhost:8000/api/user", data)
+                .then((response) => {
+                    setLoading(false);
+                    console.log(response.data);
+                    if (response.data.sucess === false) {
+                        swl({
+                            title: "Error",
+                            text: response.data.message,
+                            icon: "error",
+                            button: "Ok",
+                        });
+                    } else {
+                        swl({
+                            title: "Success",
+                            text: "Vous etes inscrit, connecté pour continuer",
+                            icon: "success",
+                            button: "Ok",
+                        }).then(() => {
+                            navigate("/");
+                        });
+                    }
+                })
+                .catch((error) => {
+                    setLoading(false);
+                    console.log(error);
+                    swl({
+                        title: "Error",
+                        text: "Une erreur est survenue, Veuillez réessayer",
+                        icon: "error",
+                        button: "Ok",
+                    });
+                });
         }
     };
 
