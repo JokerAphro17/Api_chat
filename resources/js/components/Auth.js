@@ -15,6 +15,7 @@ import { NavLink } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
+import Loader from "./Loader";
 function Copyright(props) {
     return (
         <Typography
@@ -51,7 +52,12 @@ export default function SignIn() {
         if (password === "") {
             setPasswordError(true);
         }
-        if (email !== "" && password !== "") {
+        if (email !== "" && password !== "" && error === false) {
+            const data = {
+                email: email,
+                password: password,
+            };
+            setIsLoading(true);
         }
     };
 
@@ -93,6 +99,7 @@ export default function SignIn() {
                         <Typography component="h1" variant="h5">
                             Connexion
                         </Typography>
+                        <Loader isLoading={isLoading} />
                         <Box
                             component="form"
                             onSubmit={handleSubmit}
