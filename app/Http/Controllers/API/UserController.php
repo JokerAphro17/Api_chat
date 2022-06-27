@@ -37,11 +37,11 @@ class UserController extends BaseController
             'c_password' => 'required|same:password',
         ]);
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 200);
+            return response()->json(['error'=>$validator->errors()], 401);
         }
         $mailExist = User::where('email', $request->email)->first();
         if($mailExist){
-            return response()->json(['success' => false, 'message' => 'Cet email existe déjà.'], 200);
+            return response()->json(['success' => false, 'message' => 'Cet email existe déjà.'], 401);
         }
         $input = $request->all();
         

@@ -58,7 +58,9 @@ class MessageController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
+
         $messageSend = Message::where('sender_id', $input['sender_id'])->where('receiver_id', $input['receiver_id'])->get();
+        
         $messageReceived = Message::where('sender_id', $input['receiver_id'])->where('receiver_id', $input['sender_id'])->get();
         $messages = $messageSend->merge($messageReceived);
         return $this->sendResponse($messages, 'Messages retrieved successfully.');
