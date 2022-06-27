@@ -20,7 +20,7 @@ import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import Loader from "./components/Loader";
-import swl from "sweetalert";
+import AuthApi from "../service/AuthApi";
 function Copyright(props) {
     return (
         <Typography
@@ -48,7 +48,6 @@ export default function Login() {
     const [password_error, setPasswordError] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [error, setError] = React.useState(false);
-    const [error_api, setErrorApi] = React.useState(false);
     const location = useLocation();
     const [data, setData] = React.useState(null);
     const handleSubmit = (event) => {
@@ -65,6 +64,7 @@ export default function Login() {
                 password: password,
             };
             setIsLoading(true);
+            AuthApi(data, setData, setIsLoading);
         }
     };
 

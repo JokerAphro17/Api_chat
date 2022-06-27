@@ -19,4 +19,6 @@ Route::get('/', function () {
 Route::get('/register', function (){
     return view('welcome');
 });
-
+Route::get('/chat', function (){
+    return view('welcome');
+});
