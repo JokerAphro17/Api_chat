@@ -14,6 +14,9 @@ import Avatar from "@material-ui/core/Avatar";
 import Fab from "@material-ui/core/Fab";
 import SendIcon from "@material-ui/icons/Send";
 import { useEffect } from "react";
+import { logout } from "../service/AuthApi";
+import Auth from "../auth/Auth";
+import { useNavigate } from "react-router-dom";
 const useStyles = makeStyles({
     table: {
         minWidth: 650,
@@ -38,6 +41,9 @@ const Chat = () => {
     const classes = useStyles();
     const [message, setMessage] = React.useState("");
     const [users, setUsers] = React.useState([]);
+    const { isAuthenticated, setIsAuthenticated } = React.useContext(Auth);
+    const history = useNavigate();
+    const [currentUser, setCurrentUser] = React.useState([]);
 
     useEffect(() => {
         axios
@@ -49,9 +55,17 @@ const Chat = () => {
             .catch((err) => {
                 console.log(err);
             });
-        console.log(users);
     }, []);
-
+    useEffect(() => {
+        axios
+            .get(
+                "http://localhost:8000/api/user/" + localStorage.getItem("user")
+            )
+            .then((res) => {
+                console.log(res.data);
+                setCurrentUser(res.data.data);
+            });
+    }, []);
     return (
         <div>
             <Grid container>
@@ -59,16 +73,32 @@ const Chat = () => {
                     <Typography variant="h5" className="header-message">
                         Chat
                     </Typography>
+                    <Fab
+                        variant="extended"
+                        color="primary"
+                        align="right"
+                        aria-label="add"
+                        className="logout-button"
+                        onClick={() => {
+                            logout();
+                            setIsAuthenticated(false);
+                            history("/");
+                        }}
+                    >
+                        Logout
+                    </Fab>
                 </Grid>
             </Grid>
             <Grid container component={Paper} className={classes.chatSection}>
                 <Grid item xs={3} className={classes.borderRight500}>
                     <List>
-                        <ListItem button key="Aphro CG">
+                        <ListItem button key={currentUser.nom}>
                             <ListItemIcon>
-                                <Avatar color="primary">AC</Avatar>
+                                <Avatar color="primary">{}</Avatar>
                             </ListItemIcon>
-                            <ListItemText primary="Aphro CG"></ListItemText>
+                            <ListItemText
+                                primary={currentUser.nom}
+                            ></ListItemText>
                         </ListItem>
                     </List>
                     <Divider />
@@ -82,42 +112,43 @@ const Chat = () => {
                     </Grid>
                     <Divider />
                     <List
-                        // scrollable liste
                         style={{
                             height: "60vh",
                             overflowY: "auto",
                         }}
                     >
-                        {users.map((user) => (
-                            <ListItem button key={user.id}>
-                                <ListItemIcon>
-                                    <Avatar
-                                        sx={{
-                                            // rendom color for each users
-                                            bgcolor: `${
-                                                Math.random() *
-                                                0xffffff *
-                                                user.id
-                                            }`,
-                                        }}
-                                    >
-                                        {user.nom.charAt(0) +
-                                            user.prenom.charAt(0)}
-                                    </Avatar>
-                                </ListItemIcon>
-                                <ListItemText primary={user.nom}>
-                                    {user.nom + " " + user.prenom}
-                                </ListItemText>
-                                <ListItemText
-                                    secondary="oneline"
-                                    align="right"
-                                ></ListItemText>
-                            </ListItem>
-                        ))}
+                        {users
+                            .filter((user) => {
+                                return user.id !== currentUser.id;
+                            })
+                            .map((user) => (
+                                <ListItem button key={user.id}>
+                                    <ListItemIcon>
+                                        <Avatar
+                                            sx={{
+                                                bgcolor: `${
+                                                    Math.random() *
+                                                    0xffffff *
+                                                    user.id
+                                                }`,
+                                            }}
+                                        >
+                                            {user.nom.charAt(0) +
+                                                user.prenom.charAt(0)}
+                                        </Avatar>
+                                    </ListItemIcon>
+                                    <ListItemText primary={user.nom}>
+                                        {user.nom + " " + user.prenom}
+                                    </ListItemText>
+                                    <ListItemText
+                                        secondary="oneline"
+                                        align="right"
+                                    ></ListItemText>
+                                </ListItem>
+                            ))}
                     </List>
                 </Grid>
                 <Grid item xs={9}>
-                    
                     <List className={classes.messageArea}>
                         <ListItem key="1">
                             <Grid container>

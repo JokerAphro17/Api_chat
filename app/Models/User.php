@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Models\Message');
     }
+    public function tokens()
+    {
+        return $this->hasOne('App\Models\PersonalAccessToken','tokenable_id');
+    }
+
 }

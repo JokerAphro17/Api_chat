@@ -20,7 +20,11 @@ import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import Loader from "./components/Loader";
-import AuthApi from "../service/AuthApi";
+import { login } from "../service/AuthApi";
+import Chat from "./Chat";
+import Auth from "../auth/Auth";
+import { useNavigate } from "react-router-dom";
+
 function Copyright(props) {
     return (
         <Typography
@@ -50,6 +54,15 @@ export default function Login() {
     const [error, setError] = React.useState(false);
     const location = useLocation();
     const [data, setData] = React.useState(null);
+    const { isAuthenticated, setIsAuthenticated } = React.useContext(Auth);
+    const history = useNavigate();
+
+    React.useEffect(() => {
+        if (isAuthenticated) {
+            history("/chat");
+        }
+    }, [isAuthenticated]);
+
     const handleSubmit = (event) => {
         event.preventDefault();
         if (email === "") {
@@ -64,7 +77,13 @@ export default function Login() {
                 password: password,
             };
             setIsLoading(true);
-            AuthApi(data, setData, setIsLoading);
+            // async function to login
+            login(data, setIsLoading).then((response) => {
+                if (response) {
+                    setIsAuthenticated(true);
+                    history("/chat");
+                }
+            });
         }
     };
 

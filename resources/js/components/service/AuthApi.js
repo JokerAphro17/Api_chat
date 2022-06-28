@@ -1,13 +1,24 @@
 import axios from "axios";
+import jwtDecode from "jwt-decode";
+import { get } from "lodash";
 import swl from "sweetalert";
-export default function AuthApi(data, setdata, loading) {
-    axios
+import { getItem, setItem, removeItem } from "./LocalStorage";
+
+function hasAuthenticated() {
+    if (getItem("token")) {
+        return true;
+    }
+    return false;
+}
+function login(data, loading) {
+    return axios
         .post("/api/login", data)
         .then((response) => {
             loading(false);
             if (response.data.success) {
-                setdata(response.data.user);
-                swl("Success", response.data.message, "success");
+                console.log(response.data);
+                setItem("token", response.data.data.token);
+                setItem("user", response.data.data.user.id);
                 return true;
             } else {
                 swl("Error", response.data.message, "error");
@@ -15,7 +26,14 @@ export default function AuthApi(data, setdata, loading) {
         })
         .catch((error) => {
             loading(false);
-            swl("Error", error.message, "error");
+            swl("Error", "probleme de connexion", "error");
             return false;
         });
 }
+function logout() {
+    removeItem("token");
+    removeItem("user");
+    return true;
+}
+
+export { hasAuthenticated, login, logout };

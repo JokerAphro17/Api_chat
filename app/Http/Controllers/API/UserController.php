@@ -59,8 +59,12 @@ class UserController extends BaseController
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show($id)
     {   
+        $user = User::find($id);
+        if(!$user){
+            return response()->json(['success' => false, 'message' => 'Cet utilisateur n\'existe pas.'], 404);
+        }
         return $this->sendResponse($user, 'Utilisateur envoyer avec success.');
     }
 
@@ -102,7 +106,15 @@ class UserController extends BaseController
         if(!\Hash::check($request->password, $useur->password)){
             return $this->sendError('Email ou mot de passe incorrect.', $useur);
         }
-        return $this->sendResponse($useur, 'Connexion reussie.');
+        // get user token 
+        $token = $useur->tokens()->get()->first();
+        $response = [
+            'token' => $token->token,
+            'user' => $useur,
+            
+        ];
+
+        return $this->sendResponse($response, 'Connexion reussie.');
     }
 }
 
