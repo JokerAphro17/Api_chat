@@ -5,7 +5,7 @@ import swl from "sweetalert";
 import { getItem, setItem, removeItem } from "./LocalStorage";
 
 function hasAuthenticated() {
-    if (getItem("token")) {
+    if (getItem("user")) {
         return true;
     }
     return false;
@@ -17,21 +17,17 @@ function login(data, loading) {
             loading(false);
             if (response.data.success) {
                 console.log(response.data);
-                setItem("token", response.data.data.token);
-                setItem("user", response.data.data.user.id);
-                return true;
-            } else {
-                swl("Error", response.data.message, "error");
+                setItem("user", response.data.data.id);
+                return response.data.success;
             }
         })
-        .catch((error) => {
+        .catch((err) => {
             loading(false);
-            swl("Error", "probleme de connexion", "error");
+            console.log(err);
             return false;
         });
 }
 function logout() {
-    removeItem("token");
     removeItem("user");
     return true;
 }

@@ -170,7 +170,6 @@ const Chat = () => {
                             <Grid container>
                                 <Grid item xs={12}>
                                     <ListItemText
-                                        className="bg-primary rounded-pill"
                                         align="left"
                                         primary="Wesh sava et chez toi ?"
                                     ></ListItemText>

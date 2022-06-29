@@ -37,17 +37,16 @@ class UserController extends BaseController
             'c_password' => 'required|same:password',
         ]);
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);
+            return response()->json(['error'=>$validator->errors()], 200);
         }
         $mailExist = User::where('email', $request->email)->first();
         if($mailExist){
-            return response()->json(['success' => false, 'message' => 'Cet email existe déjà.'], 401);
+            return response()->json(['success' => false, 'message' => 'Cet email existe déjà.'], 200);
         }
         $input = $request->all();
         
         $input['password'] = \Hash::make($input['password']);
         $user = User::create($input);
-        $success['token'] = $user->createToken('MyApp')->accessToken;
         $success['nom'] = $user->nom;
         $success['prenom'] = $user->prenom;
         return $this->sendResponse($success, 'Votre compte a été creer avec success.');
@@ -99,22 +98,17 @@ class UserController extends BaseController
         if ($validator->fails()) {
             return $this->sendError('Erreur de la validation.', $validator->errors());
         }
-        $useur = User::where('email', $request->email)->first();
-        if(!$useur){
-            return $this->sendError('Email ou mot de passe incorrect.', $useur);
+        $user = User::where('email', $request->email)->first();
+        if(!$user){
+            return $this->sendError('Email ou mot de passe incorrect.', $user);
         }
-        if(!\Hash::check($request->password, $useur->password)){
-            return $this->sendError('Email ou mot de passe incorrect.', $useur);
+        if(!\Hash::check($request->password, $user->password)){
+            return $this->sendError('Email ou mot de passe incorrect.', $user);
         }
         // get user token 
-        $token = $useur->tokens()->get()->first();
-        $response = [
-            'token' => $token->token,
-            'user' => $useur,
-            
-        ];
+        
 
-        return $this->sendResponse($response, 'Connexion reussie.');
+        return $this->sendResponse($user, 'Connexion reussie.');
     }
 }
 

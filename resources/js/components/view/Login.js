@@ -77,13 +77,17 @@ export default function Login() {
                 password: password,
             };
             setIsLoading(true);
-            // async function to login
-            login(data, setIsLoading).then((response) => {
-                if (response) {
+            //async to login
+            const log = async () => {
+                const verif = await login(data, setIsLoading);
+                if (verif) {
                     setIsAuthenticated(true);
                     history("/chat");
+                } else {
+                    swal("Error", "Email or password is incorrect", "error");
                 }
-            });
+            };
+            log();
         }
     };
 

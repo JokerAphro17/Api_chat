@@ -93,21 +93,20 @@ export default function SignUp() {
                 .then((response) => {
                     setLoading(false);
                     console.log(response.data);
-                    if (response.data.sucess === false) {
+                    if (response.data.success) {
+                        swl({
+                            title: "Success",
+                            text: "You have successfully registered",
+                            icon: "success",
+                            button: "OK",
+                        });
+                        navigate("/");
+                    } else {
                         swl({
                             title: "Error",
                             text: response.data.message,
                             icon: "error",
-                            button: "Ok",
-                        });
-                    } else {
-                        swl({
-                            title: "Success",
-                            text: "Vous etes inscrit, connecté pour continuer",
-                            icon: "success",
-                            button: "Ok",
-                        }).then(() => {
-                            navigate("/");
+                            button: "OK",
                         });
                     }
                 })
@@ -116,9 +115,9 @@ export default function SignUp() {
                     console.log(error);
                     swl({
                         title: "Error",
-                        text: "Une erreur est survenue, Veuillez réessayer",
+                        text: "Something went wrong",
                         icon: "error",
-                        button: "Ok",
+                        button: "OK",
                     });
                 });
         }

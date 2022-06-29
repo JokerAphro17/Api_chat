@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class PersonalAccessToken extends Model
 {
     use HasFactory;
+    protected $fillable = ['name', 'token', 'user_id'];
 }
