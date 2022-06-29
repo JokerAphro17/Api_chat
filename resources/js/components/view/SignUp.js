@@ -89,14 +89,14 @@ export default function SignUp() {
                 c_password: confirmPassword,
             };
             axios
-                .post("http://localhost:8000/api/user", data)
+                .post("api/user", data)
                 .then((response) => {
                     setLoading(false);
                     console.log(response.data);
                     if (response.data.success) {
                         swl({
                             title: "Success",
-                            text: "You have successfully registered",
+                            text: "Enregistrement réussi",
                             icon: "success",
                             button: "OK",
                         });
@@ -115,7 +115,7 @@ export default function SignUp() {
                     console.log(error);
                     swl({
                         title: "Error",
-                        text: "Something went wrong",
+                        text: "Erreur lors de l'enregistrement",
                         icon: "error",
                         button: "OK",
                     });

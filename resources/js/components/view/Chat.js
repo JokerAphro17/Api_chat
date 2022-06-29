@@ -47,7 +47,7 @@ const Chat = () => {
 
     useEffect(() => {
         axios
-            .get("http://localhost:8000/api/user")
+            .get("/api/user")
             .then((res) => {
                 console.log(res.data);
                 setUsers(res.data.data);
@@ -57,14 +57,10 @@ const Chat = () => {
             });
     }, []);
     useEffect(() => {
-        axios
-            .get(
-                "http://localhost:8000/api/user/" + localStorage.getItem("user")
-            )
-            .then((res) => {
-                console.log(res.data);
-                setCurrentUser(res.data.data);
-            });
+        axios.get("/api/user/" + localStorage.getItem("user")).then((res) => {
+            console.log(res.data);
+            setCurrentUser(res.data.data);
+        });
     }, []);
     return (
         <div>
