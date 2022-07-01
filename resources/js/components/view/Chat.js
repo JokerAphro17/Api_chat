@@ -44,7 +44,7 @@ const Chat = () => {
     const { isAuthenticated, setIsAuthenticated } = React.useContext(Auth);
     const history = useNavigate();
     const [currentUser, setCurrentUser] = React.useState([]);
-
+    const [search, setSearch] = React.useState("");
     useEffect(() => {
         axios
             .get("/api/user")
@@ -62,6 +62,11 @@ const Chat = () => {
             setCurrentUser(res.data.data);
         });
     }, []);
+    const handleChange = (event) => {
+        console.log(event.target.value);
+        setSearch(event.target.value);
+    };
+
     return (
         <div>
             <Grid container>
@@ -102,6 +107,9 @@ const Chat = () => {
                         <TextField
                             id="outlined-basic-email"
                             label="Search"
+                            onChange={(e) => {
+                                handleChange(e);
+                            }}
                             variant="outlined"
                             fullWidth
                         />
