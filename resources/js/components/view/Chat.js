@@ -57,7 +57,7 @@ const Chat = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get("/api/user/" + localStorage.getItem("user")).then((res) => {
+        axios.get("/api/uer/" + localStorage.getItem("user")).then((res) => {
             console.log(res.data);
             setCurrentUser(res.data.data);
         });
