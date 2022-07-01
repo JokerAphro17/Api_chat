@@ -110,5 +110,19 @@ class UserController extends BaseController
 
         return $this->sendResponse($user, 'Connexion reussie.');
     }
+    public function search(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'search' => 'required',
+        ]);
+        if(!$validator->fails()){
+            $user = User::where('nom', 'like', '%'.$request->search.'%')->orWhere('prenom', 'like', '%'.$request->search.'%')->get();
+            return $this->sendResponse($user, 'Utilisateur envoyer avec success.');
+        }
+        $users = User::all();
+        return $this->sendResponse($users, 'Utilisateur envoyer avec success.');
+    }
+        
+
 }
 

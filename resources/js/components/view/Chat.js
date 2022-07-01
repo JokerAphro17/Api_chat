@@ -65,6 +65,10 @@ const Chat = () => {
     const handleChange = (event) => {
         console.log(event.target.value);
         setSearch(event.target.value);
+        axios.get("/api/user/search/" + event.target.value).then((res) => {
+            console.log(res.data);
+            setUsers(res.data.data);
+        });
     };
 
     return (
