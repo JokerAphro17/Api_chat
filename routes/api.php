@@ -20,3 +20,4 @@ Route::get('/unauthorized', function () {
 });
 
  Route::post('/login', [UserController::class, 'login']);
+ Route::get('/search/{id}', [UserController::class, 'search']);
