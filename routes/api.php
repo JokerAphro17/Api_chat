@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\MessageController;
 
-
 Route::resource("user", UserController::class);
 
 Route::resource("message", MessageController::class);
@@ -20,4 +19,4 @@ Route::get('/unauthorized', function () {
 });
 
  Route::post('/login', [UserController::class, 'login']);
- Route::get('/user/search/{searcher}', [UserController::class, 'search']);
+ Route::get('/user/search/{searcher?}', [UserController::class, 'search']);

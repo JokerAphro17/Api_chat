@@ -40,16 +40,12 @@ const useStyles = makeStyles({
 const ChatBox = ({ messages, setMessages, receiver }) => {
     const [sms, setSms] = React.useState("");
     const classes = useStyles();
-    const getMessage = () => {
-        axios
-            .get("/api/message/all/" + id_user + "/" + receiver)
-            .then((res) => {
-                setMessages(res.data.data);
-                console.log(res.data.data);
-            });
-    };
+
     useEffect(() => {
-        getMessage();
+        const interval = setInterval(() => {
+            getMessage();
+        }, 2000);
+        return () => clearInterval(interval);
     }, [receiver]);
 
     const sendMessage = () => {
@@ -63,7 +59,14 @@ const ChatBox = ({ messages, setMessages, receiver }) => {
             getMessage();
         });
     };
-
+    const getMessage = () => {
+        axios
+            .get("/api/message/all/" + id_user + "/" + receiver)
+            .then((res) => {
+                setMessages(res.data.data);
+                console.log(res.data.data);
+            });
+    };
     return (
         <Grid item xs={9}>
             <List className={classes.messageArea}>
@@ -117,9 +120,6 @@ const ChatBox = ({ messages, setMessages, receiver }) => {
                     </Fab>
                 </Grid>
             </Grid>
-            {setInterval(() => {
-                getMessage();
-            }, 3000)}
         </Grid>
     );
 };
@@ -133,6 +133,7 @@ const Chat = () => {
     const history = useNavigate();
     const [currentUser, setCurrentUser] = React.useState([]);
     const [search, setSearch] = React.useState("");
+
     useEffect(() => {
         axios
             .get("/api/user")
