@@ -63,9 +63,6 @@ const ChatBox = ({ messages, setMessages, receiver }) => {
             getMessage();
         });
     };
-    setInterval(() => {
-        getMessage();
-    }, 2000);
 
     return (
         <Grid item xs={9}>
@@ -120,6 +117,9 @@ const ChatBox = ({ messages, setMessages, receiver }) => {
                     </Fab>
                 </Grid>
             </Grid>
+            {setInterval(() => {
+                getMessage();
+            }, 3000)}
         </Grid>
     );
 };
