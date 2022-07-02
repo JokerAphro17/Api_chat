@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import { logout } from "../service/AuthApi";
 import Auth from "../auth/Auth";
 import { useNavigate } from "react-router-dom";
+const id_user = localStorage.getItem("user");
 const useStyles = makeStyles({
     table: {
         minWidth: 650,
@@ -36,10 +37,97 @@ const useStyles = makeStyles({
         overflowY: "auto",
     },
 });
+const ChatBox = ({ messages, setMessages, receiver }) => {
+    const [sms, setSms] = React.useState("");
+    const classes = useStyles();
+    const getMessage = () => {
+        axios
+            .get("/api/message/all/" + id_user + "/" + receiver)
+            .then((res) => {
+                setMessages(res.data.data);
+                console.log(res.data.data);
+            });
+    };
+    useEffect(() => {
+        getMessage();
+    }, [receiver]);
+
+    const sendMessage = () => {
+        const data = {
+            sender_id: parseInt(id_user),
+            receiver_id: parseInt(receiver),
+            message: sms,
+        };
+        axios.post("/api/message", data).then((res) => {
+            setSms("");
+            getMessage();
+        });
+    };
+    setInterval(() => {
+        getMessage();
+    }, 2000);
+
+    return (
+        <Grid item xs={9}>
+            <List className={classes.messageArea}>
+                {messages.map((message) => (
+                    <ListItem key={message.id}>
+                        <Grid container>
+                            <Grid item xs={12}>
+                                <ListItemText
+                                    align={
+                                        message.sender_id ===
+                                        parseInt(localStorage.getItem("user"))
+                                            ? "right"
+                                            : "left"
+                                    }
+                                    primary={message.message}
+                                ></ListItemText>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <ListItemText
+                                    align={
+                                        message.sender_id ===
+                                        parseInt(localStorage.getItem("user"))
+                                            ? "right"
+                                            : "left"
+                                    }
+                                    secondary={message.created_at}
+                                ></ListItemText>
+                            </Grid>
+                        </Grid>
+                    </ListItem>
+                ))}
+            </List>
+            <Divider />
+            <Grid container style={{ padding: "20px" }}>
+                <Grid item xs={11}>
+                    <TextField
+                        id="outlined-basic-email"
+                        label="Ecrivez votre message"
+                        fullWidth
+                        value={sms}
+                        onChange={(e) => setSms(e.target.value)}
+                    />
+                </Grid>
+                <Grid xs={1} align="right">
+                    <Fab color="primary" aria-label="add">
+                        <SendIcon
+                            onClick={() => {
+                                sendMessage();
+                            }}
+                        />
+                    </Fab>
+                </Grid>
+            </Grid>
+        </Grid>
+    );
+};
 
 const Chat = () => {
     const classes = useStyles();
-    const [message, setMessage] = React.useState("");
+    const [receiver, setReceiver] = React.useState(0);
+    const [messages, setMessages] = React.useState([]);
     const [users, setUsers] = React.useState([]);
     const { isAuthenticated, setIsAuthenticated } = React.useContext(Auth);
     const history = useNavigate();
@@ -57,7 +145,7 @@ const Chat = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get("/api/uer/" + localStorage.getItem("user")).then((res) => {
+        axios.get("/api/user/" + localStorage.getItem("user")).then((res) => {
             console.log(res.data);
             setCurrentUser(res.data.data);
         });
@@ -130,7 +218,13 @@ const Chat = () => {
                                 return user.id !== currentUser.id;
                             })
                             .map((user) => (
-                                <ListItem button key={user.id}>
+                                <ListItem
+                                    button
+                                    key={user.id}
+                                    onClick={() => {
+                                        setReceiver(user.id);
+                                    }}
+                                >
                                     <ListItemIcon>
                                         <Avatar
                                             sx={{
@@ -156,73 +250,15 @@ const Chat = () => {
                             ))}
                     </List>
                 </Grid>
-                <Grid item xs={9}>
-                    <List className={classes.messageArea}>
-                        <ListItem key="1">
-                            <Grid container>
-                                <Grid item xs={12}>
-                                    <ListItemText
-                                        align="right"
-                                        primary="C'est comment?"
-                                    ></ListItemText>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <ListItemText
-                                        align="right"
-                                        secondary="09:30"
-                                    ></ListItemText>
-                                </Grid>
-                            </Grid>
-                        </ListItem>
-                        <ListItem key="2">
-                            <Grid container>
-                                <Grid item xs={12}>
-                                    <ListItemText
-                                        align="left"
-                                        primary="Wesh sava et chez toi ?"
-                                    ></ListItemText>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <ListItemText
-                                        align="left"
-                                        secondary="09:31"
-                                    ></ListItemText>
-                                </Grid>
-                            </Grid>
-                        </ListItem>
-                        <ListItem key="3">
-                            <Grid container>
-                                <Grid item xs={12}>
-                                    <ListItemText
-                                        align="right"
-                                        primary="Bien aussi? "
-                                    ></ListItemText>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <ListItemText
-                                        align="right"
-                                        secondary="10:30"
-                                    ></ListItemText>
-                                </Grid>
-                            </Grid>
-                        </ListItem>
-                    </List>
-                    <Divider />
-                    <Grid container style={{ padding: "20px" }}>
-                        <Grid item xs={11}>
-                            <TextField
-                                id="outlined-basic-email"
-                                label="Ecrivez votre message"
-                                fullWidth
-                            />
-                        </Grid>
-                        <Grid xs={1} align="right">
-                            <Fab color="primary" aria-label="add">
-                                <SendIcon />
-                            </Fab>
-                        </Grid>
-                    </Grid>
-                </Grid>
+                {receiver ? (
+                    <ChatBox
+                        receiver={receiver}
+                        messages={messages}
+                        setMessages={setMessages}
+                    />
+                ) : (
+                    <div></div>
+                )}
             </Grid>
         </div>
     );

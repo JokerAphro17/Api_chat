@@ -12,7 +12,7 @@ Route::resource("message", MessageController::class);
 Route::post("user/register", [UserController::class, "register"]);
 
 
-Route::post('/message/all', [MessageController::class, 'all']);
+Route::get('/message/all/{sender}/{receiver}', [MessageController::class, 'all']);
 
 
 Route::get('/unauthorized', function () {
@@ -20,4 +20,4 @@ Route::get('/unauthorized', function () {
 });
 
  Route::post('/login', [UserController::class, 'login']);
- Route::get('/search/{id}', [UserController::class, 'search']);
+ Route::get('/user/search/{searcher}', [UserController::class, 'search']);

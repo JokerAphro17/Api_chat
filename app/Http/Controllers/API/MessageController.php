@@ -48,21 +48,11 @@ class MessageController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function all(Request $request)
+    public function all($sender_id, $recever_id)
     {   
-        $input = $request->all();
-        $validator = \Validator::make($input, [
-            'sender_id' => 'required',
-            'receiver_id' => 'required'
-        ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
-
-        $messageSend = Message::where('sender_id', $input['sender_id'])->where('receiver_id', $input['receiver_id'])->get();
-        
-        $messageReceived = Message::where('sender_id', $input['receiver_id'])->where('receiver_id', $input['sender_id'])->get();
-        $messages = $messageSend->merge($messageReceived);
+        $messages_send = \App\Models\Message::where('sender_id', $sender_id)->where('receiver_id', $recever_id)->get();
+        $messages_receive = \App\Models\Message::where('sender_id', $recever_id)->where('receiver_id', $sender_id)->get();
+        $messages = $messages_send->merge($messages_receive);
         return $this->sendResponse($messages, 'Messages retrieved successfully.');
     }
   

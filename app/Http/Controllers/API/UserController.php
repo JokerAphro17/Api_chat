@@ -110,7 +110,7 @@ class UserController extends BaseController
 
         return $this->sendResponse($user, 'Connexion reussie.');
     }
-    public function search( $searcher)
+    public function search($searcher)
     {
        if($searcher == ""){
            $user = User::all();
