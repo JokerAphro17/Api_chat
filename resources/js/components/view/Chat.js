@@ -16,6 +16,7 @@ import SendIcon from "@material-ui/icons/Send";
 import { useEffect } from "react";
 import { logout } from "../service/AuthApi";
 import Auth from "../auth/Auth";
+import { ExitToApp } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
 const id_user = localStorage.getItem("user");
 const useStyles = makeStyles({
@@ -35,6 +36,9 @@ const useStyles = makeStyles({
     messageArea: {
         height: "70vh",
         overflowY: "auto",
+    },
+    selected: {
+        backgroundColor: "#000fff",
     },
 });
 const ChatBox = ({ messages, setMessages, receiver }) => {
@@ -70,34 +74,53 @@ const ChatBox = ({ messages, setMessages, receiver }) => {
     return (
         <Grid item xs={9}>
             <List className={classes.messageArea}>
-                {messages.map((message) => (
-                    <ListItem key={message.id}>
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <ListItemText
-                                    align={
-                                        message.sender_id ===
-                                        parseInt(localStorage.getItem("user"))
-                                            ? "right"
-                                            : "left"
-                                    }
-                                    primary={message.message}
-                                ></ListItemText>
+                {messages
+                    .sort((a, b) => {
+                        var keyA = new Date(a.updated_at),
+                            keyB = new Date(b.updated_at);
+                        if (keyA < keyB) return -1;
+                        if (keyA > keyB) return 1;
+                        return 0;
+                    })
+                    .map((message) => (
+                        <ListItem key={message.id}>
+                            <Grid container>
+                                <Grid item xs={12}>
+                                    <ListItemText
+                                        align={
+                                            message.sender_id ===
+                                            parseInt(
+                                                localStorage.getItem("user")
+                                            )
+                                                ? "right"
+                                                : "left"
+                                        }
+                                    >
+                                        <span>{message.message}</span>
+                                    </ListItemText>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <ListItemText
+                                        align={
+                                            message.sender_id ===
+                                            parseInt(
+                                                localStorage.getItem("user")
+                                            )
+                                                ? "right"
+                                                : "left"
+                                        }
+                                        secondary={
+                                            message.created_at
+                                                .split("T")[1]
+                                                .split(".")[0] +
+                                            " " +
+                                            message.created_at.split("T")[0]
+                                        }
+                                    ></ListItemText>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12}>
-                                <ListItemText
-                                    align={
-                                        message.sender_id ===
-                                        parseInt(localStorage.getItem("user"))
-                                            ? "right"
-                                            : "left"
-                                    }
-                                    secondary={message.created_at}
-                                ></ListItemText>
-                            </Grid>
-                        </Grid>
-                    </ListItem>
-                ))}
+                        </ListItem>
+                    ))}
             </List>
             <Divider />
             <Grid container style={{ padding: "20px" }}>
@@ -123,7 +146,6 @@ const ChatBox = ({ messages, setMessages, receiver }) => {
         </Grid>
     );
 };
-
 const Chat = () => {
     const classes = useStyles();
     const [receiver, setReceiver] = React.useState(0);
@@ -167,9 +189,7 @@ const Chat = () => {
                     <Typography variant="h5" className="header-message">
                         Chat
                     </Typography>
-                    <Fab
-                        variant="extended"
-                        color="primary"
+                    <ListItemText
                         align="right"
                         aria-label="add"
                         className="logout-button"
@@ -179,11 +199,28 @@ const Chat = () => {
                             history("/");
                         }}
                     >
-                        Logout
-                    </Fab>
+                        {" "}
+                        <i
+                            className="fas fa-sign-out-alt"
+                            style={{
+                                color: "#ff0000",
+                                fontSize: "30px",
+                                cursor: "pointer",
+                            }}
+                        ></i>
+                    </ListItemText>
                 </Grid>
             </Grid>
-            <Grid container component={Paper} className={classes.chatSection}>
+            <Grid
+                container
+                component={Paper}
+                className={classes.chatSection}
+                style={{
+                    height: "80vh",
+                    width: "100%",
+                    border: "1px solid black",
+                }}
+            >
                 <Grid item xs={3} className={classes.borderRight500}>
                     <List>
                         <ListItem button key={currentUser.nom}>
@@ -225,17 +262,14 @@ const Chat = () => {
                                     onClick={() => {
                                         setReceiver(user.id);
                                     }}
+                                    className={
+                                        receiver === user.id
+                                            ? classes.selected
+                                            : ""
+                                    }
                                 >
                                     <ListItemIcon>
-                                        <Avatar
-                                            sx={{
-                                                bgcolor: `${
-                                                    Math.random() *
-                                                    0xffffff *
-                                                    user.id
-                                                }`,
-                                            }}
-                                        >
+                                        <Avatar>
                                             {user.nom.charAt(0) +
                                                 user.prenom.charAt(0)}
                                         </Avatar>
