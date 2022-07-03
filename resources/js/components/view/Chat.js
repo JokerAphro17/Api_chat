@@ -38,7 +38,19 @@ const useStyles = makeStyles({
         overflowY: "auto",
     },
     selected: {
-        backgroundColor: "#000fff",
+        backgroundColor: "#5bc0de",
+    },
+    messageSend: {
+        backgroundColor: "#0275d8",
+        color: "#fff",
+        padding: "10px",
+        borderRadius: "10px",
+    },
+    messageReceive: {
+        backgroundColor: "#f0ad4e",
+        color: "#fff",
+        padding: "10px",
+        borderRadius: "10px",
     },
 });
 const ChatBox = ({ messages, setMessages, receiver }) => {
@@ -96,7 +108,18 @@ const ChatBox = ({ messages, setMessages, receiver }) => {
                                                 : "left"
                                         }
                                     >
-                                        <span>{message.message}</span>
+                                        <span
+                                            className={
+                                                message.sender_id ===
+                                                parseInt(
+                                                    localStorage.getItem("user")
+                                                )
+                                                    ? classes.messageSend
+                                                    : classes.messageReceive
+                                            }
+                                        >
+                                            {message.message}
+                                        </span>
                                     </ListItemText>
                                 </Grid>
                                 <Grid item xs={12}>
